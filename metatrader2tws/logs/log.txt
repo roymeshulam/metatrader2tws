@@ -1,0 +1,16 @@
+[2019-11-11 15:19:56] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
+[2019-11-11 15:20:30] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
+[2019-11-11 15:21:31] [INFO   ] Initialization complete 
+[2019-11-11 15:21:31] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
+Nov 11, 2019 3:23:18 PM com.meshulro.MetaTraderIbBridge <init>
+INFO: Initialization complete
+Nov 11, 2019 3:23:18 PM com.meshulro.MetaTraderIbBridge <init>
+INFO: Order book last modified date 11/11/2019 15:02:58
+[2019-11-11 15:23:57] [INFO   ] Initialization complete 
+[2019-11-11 15:23:57] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
+[2019-11-11 16:18:34] [INFO   ] Initialization complete, connected MetaTrader to IB Account  
+[2019-11-11 16:18:34] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
+[2019-11-11 16:18:51] [INFO   ] Initialization complete, connected MetaTrader to IB Account null 
+[2019-11-11 16:18:51] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
+[2019-11-11 16:19:25] [INFO   ] Initialization complete, connected MetaTrader to IB Account DU1718193 
+[2019-11-11 16:19:25] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
