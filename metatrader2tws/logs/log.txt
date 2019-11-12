@@ -14,3 +14,178 @@ INFO: Order book last modified date 11/11/2019 15:02:58
 [2019-11-11 16:18:51] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
 [2019-11-11 16:19:25] [INFO   ] Initialization complete, connected MetaTrader to IB Account DU1718193 
 [2019-11-11 16:19:25] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
+[2019-11-12 21:56:53] [INFO   ] Initialization complete, connected MetaTrader to IB Account DU1718193 
+[2019-11-12 21:56:53] [INFO   ] Order book last modified date 11/11/2019 15:02:58 
+[2019-11-12 21:57:30] [INFO   ] New instruction 
+[2019-11-12 21:57:30] [INFO   ] Instruction	Buy
+Currency 1	EUR
+Currency 2	USD
+Relative Size	1.16
+Stop Loss	0.0
+Take Profit	1.2345
+ 
+[2019-11-12 22:00:30] [INFO   ] New instruction 
+[2019-11-12 22:00:30] [INFO   ] Instruction	Buy
+Currency 1	EUR
+Currency 2	USD
+Relative Size	1.1612
+Stop Loss	0.0
+Take Profit	1.2345
+ 
+[2019-11-12 22:16:26] [INFO   ] Initialization complete, connected MetaTrader to IB Account DU1718193 
+[2019-11-12 22:16:26] [INFO   ] Order book last modified date 11/12/2019 21:59:57 
+[2019-11-12 22:17:30] [INFO   ] New instruction 
+[2019-11-12 22:17:30] [INFO   ] Instruction	Buy
+Currency 1	EUR
+Currency 2	USD
+Relative Size	1.1613
+Stop Loss	0.0
+Take Profit	1.2345
+ 
+[2019-11-12 22:17:32] [INFO   ] Acct Summary. ReqId: 1, Acct: DU1718193, Tag: AvailableFunds, Value: 838424.47, Currency: USD 
+[2019-11-12 22:17:34] [INFO   ] AvailableFunds = 838424.47 
+[2019-11-12 22:20:14] [INFO   ] Initialization complete, connected MetaTrader to IB Account DU1718193 
+[2019-11-12 22:20:14] [INFO   ] Order book last modified date 11/12/2019 22:16:33 
+[2019-11-12 22:20:45] [INFO   ] New instruction 
+[2019-11-12 22:20:45] [INFO   ] Instruction	Buy
+Currency 1	EUR
+Currency 2	USD
+Relative Size	1.1612
+Stop Loss	0.0
+Take Profit	1.2345
+ 
+[2019-11-12 22:20:47] [INFO   ] Acct Summary. ReqId: 1, Acct: DU1718193, Tag: AvailableFunds, Value: 838095.18, Currency: USD 
+[2019-11-12 22:20:48] [INFO   ] AvailableFunds = 838095.18 
+[2019-11-12 22:29:45] [INFO   ] New instruction 
+[2019-11-12 22:29:45] [INFO   ] Instruction	Buy
+Currency 1	EUR
+Currency 2	USD
+Relative Size	1.1622
+Stop Loss	0.0
+Take Profit	1.2345
+ 
+[2019-11-12 22:29:46] [INFO   ] Acct Summary. ReqId: 1, Acct: DU1718193, Tag: AvailableFunds, Value: 839286, Currency: USD 
+[2019-11-12 22:29:48] [INFO   ] AvailableFunds = 839286.0 
+[2019-11-12 22:46:24] [INFO   ] Initialization complete, connected MetaTrader to IB Account DU1718193 
+[2019-11-12 22:46:24] [INFO   ] Order book last modified date 11/12/2019 22:46:07 
+[2019-11-12 22:49:15] [INFO   ] New instruction 
+[2019-11-12 22:49:15] [INFO   ] Action	Buy
+Currency 1	EUR
+Currency 2	USD
+Relative Size	0.01
+Stop Loss	0.0
+Take Profit	1.2345
+ 
+[2019-11-12 22:49:17] [INFO   ] Acct Summary. ReqId: 1, Acct: DU1718193, Tag: AvailableFunds, Value: 839235.84, Currency: USD 
+[2019-11-12 22:51:15] [INFO   ] New instruction 
+[2019-11-12 22:51:15] [INFO   ] Action	Buy
+Currency 1	EUR
+Currency 2	USD
+Relative Size	0.001
+Stop Loss	0.0
+Take Profit	1.2345
+ 
+[2019-11-12 22:51:16] [INFO   ] Acct Summary. ReqId: 1, Acct: DU1718193, Tag: AvailableFunds, Value: 838701.18, Currency: USD 
+[2019-11-12 22:56:45] [INFO   ] New instruction 
+[2019-11-12 22:56:45] [INFO   ] Action	Sell
+Currency 1	EUR
+Currency 2	USD
+Relative Size	0.001
+Stop Loss	0.0
+Take Profit	1.2345
+ 
+[2019-11-12 22:56:46] [INFO   ] Acct Summary. ReqId: 1, Acct: DU1718193, Tag: AvailableFunds, Value: 838396.49, Currency: USD 
+[2019-11-12 22:56:58] [INFO   ] Initialization complete, connected MetaTrader to IB Account DU1718193 
+[2019-11-12 22:56:58] [INFO   ] Order book last modified date 11/12/2019 22:56:43 
+[2019-11-12 22:57:15] [INFO   ] New instruction 
+[2019-11-12 22:57:15] [INFO   ] Action	Sell
+Currency 1	EUR
+Currency 2	USD
+Relative Size	0.01
+Stop Loss	0.0
+Take Profit	1.2345
+ 
+[2019-11-12 22:57:15] [INFO   ] Account list: DU1718193 
+[2019-11-12 22:57:15] [INFO   ] Next Valid Id: [7] 
+[2019-11-12 22:57:15] [INFO   ] Error. Id: -1, Code: 2104, Msg: Market data farm connection is OK:eufarm
+ 
+[2019-11-12 22:57:15] [INFO   ] Error. Id: -1, Code: 2104, Msg: Market data farm connection is OK:cashfarm
+ 
+[2019-11-12 22:57:15] [INFO   ] Error. Id: -1, Code: 2104, Msg: Market data farm connection is OK:usfarm
+ 
+[2019-11-12 22:57:15] [INFO   ] Error. Id: -1, Code: 2106, Msg: HMDS data farm connection is OK:cashhmds
+ 
+[2019-11-12 22:57:15] [INFO   ] Error. Id: -1, Code: 2106, Msg: HMDS data farm connection is OK:ushmds
+ 
+[2019-11-12 22:57:15] [INFO   ] Error. Id: -1, Code: 2158, Msg: Sec-def data farm connection is OK:secdefnj
+ 
+[2019-11-12 22:57:17] [INFO   ] Acct Summary. ReqId: 1, Acct: DU1718193, Tag: AvailableFunds, Value: 837780.92, Currency: USD 
+[2019-11-12 22:57:17] [INFO   ] AccountSummaryEnd. Req Id: 1
+ 
+[2019-11-12 22:57:18] [INFO   ] Next Valid Id: [7] 
+[2019-11-12 22:57:19] [INFO   ] OpenOrder. ID: 8, EUR, CFD @ SMART: SELL, MKT 8378.0, PreSubmitted 
+[2019-11-12 22:57:19] [INFO   ] OrderStatus. Id: 8, Status: PreSubmitted, Filled0.0, Remaining: 8378.0, AvgFillPrice: 0.0, PermId: 1703618088, ParentId: 0, LastFillPrice: 0.0, ClientId: 0, WhyHeld: null 
+[2019-11-12 22:57:19] [INFO   ] ExecDetails. -1 - [EUR], [CFD], [USD], [000132a9.5dca4016.01.01], [8], [8378.0] 
+[2019-11-12 22:57:19] [INFO   ] OpenOrder. ID: 8, EUR, CFD @ SMART: SELL, MKT 8378.0, Filled 
+[2019-11-12 22:57:19] [INFO   ] OrderStatus. Id: 8, Status: Filled, Filled8378.0, Remaining: 0.0, AvgFillPrice: 1.1008, PermId: 1703618088, ParentId: 0, LastFillPrice: 1.1008, ClientId: 0, WhyHeld: null 
+[2019-11-12 22:57:19] [INFO   ] OpenOrder. ID: 8, EUR, CFD @ SMART: SELL, MKT 8378.0, Filled 
+[2019-11-12 22:57:19] [INFO   ] OrderStatus. Id: 8, Status: Filled, Filled8378.0, Remaining: 0.0, AvgFillPrice: 1.1008, PermId: 1703618088, ParentId: 0, LastFillPrice: 1.1008, ClientId: 0, WhyHeld: null 
+[2019-11-12 22:57:19] [INFO   ] CommissionReport. [000132a9.5dca4016.01.01] - [2.0] [USD] RPNL [-6.011202] 
+[2019-11-12 22:57:28] [INFO   ] Exception: Socket closed 
+[2019-11-12 23:03:45] [INFO   ] Initialization complete, connected MetaTrader to IB Account DU1718193 
+[2019-11-12 23:03:45] [INFO   ] Order book last modified date 11/12/2019 23:03:37 
+[2019-11-12 23:04:15] [INFO   ] New instruction 
+[2019-11-12 23:04:15] [INFO   ] Action	Close
+Relative Size	0.0
+Stop Loss	0.0
+Take Profit	0.0
+ 
+[2019-11-12 23:04:15] [INFO   ] Account list: DU1718193 
+[2019-11-12 23:04:15] [INFO   ] Next Valid Id: [9] 
+[2019-11-12 23:04:15] [INFO   ] Error. Id: -1, Code: 2104, Msg: Market data farm connection is OK:eufarm
+ 
+[2019-11-12 23:04:15] [INFO   ] Error. Id: -1, Code: 2104, Msg: Market data farm connection is OK:cashfarm
+ 
+[2019-11-12 23:04:15] [INFO   ] Error. Id: -1, Code: 2104, Msg: Market data farm connection is OK:usfarm
+ 
+[2019-11-12 23:04:15] [INFO   ] Error. Id: -1, Code: 2106, Msg: HMDS data farm connection is OK:cashhmds
+ 
+[2019-11-12 23:04:15] [INFO   ] Error. Id: -1, Code: 2106, Msg: HMDS data farm connection is OK:ushmds
+ 
+[2019-11-12 23:04:15] [INFO   ] Error. Id: -1, Code: 2158, Msg: Sec-def data farm connection is OK:secdefnj
+ 
+[2019-11-12 23:04:16] [INFO   ] OpenOrder. ID: -2, EUR, CFD @ SMART: BUY, LMT 4000000.0, PendingSubmit 
+[2019-11-12 23:04:16] [INFO   ] OrderStatus. Id: -2, Status: PendingSubmit, Filled: 0.0, Remaining: 4000000.0, AvgFillPrice: 0.0, PermId: 1222033483, ParentId: 0, LastFillPrice: 0.0, ClientId: 0, WhyHeld: null 
+[2019-11-12 23:04:16] [INFO   ] OpenOrderEnd 
+[2019-11-12 23:04:17] [INFO   ] OpenOrder. ID: -2, EUR, CFD @ SMART: BUY, LMT 4000000.0, Submitted 
+[2019-11-12 23:04:17] [INFO   ] OrderStatus. Id: -2, Status: Submitted, Filled: 0.0, Remaining: 4000000.0, AvgFillPrice: 0.0, PermId: 1222033483, ParentId: 0, LastFillPrice: 0.0, ClientId: 0, WhyHeld: null 
+[2019-11-12 23:04:26] [INFO   ] Exception: Socket closed 
+[2019-11-12 23:05:04] [INFO   ] Initialization complete, connected MetaTrader to IB Account DU1718193 
+[2019-11-12 23:05:04] [INFO   ] Order book last modified date 11/12/2019 23:03:56 
+[2019-11-12 23:05:15] [INFO   ] New instruction 
+[2019-11-12 23:05:15] [INFO   ] Action	Close
+Relative Size	0.0
+Stop Loss	0.0
+Take Profit	0.0
+ 
+[2019-11-12 23:05:15] [INFO   ] OpenOrder. ID: -2, EUR, CFD @ SMART: BUY, LMT 4000000.0, Submitted 
+[2019-11-12 23:05:15] [INFO   ] OrderStatus. Id: -2, Status: Submitted, Filled: 0.0, Remaining: 4000000.0, AvgFillPrice: 0.0, PermId: 1222033483, ParentId: 0, LastFillPrice: 0.0, ClientId: 0, WhyHeld: null 
+[2019-11-12 23:05:15] [INFO   ] OpenOrderEnd 
+[2019-11-12 23:05:15] [INFO   ] Account list: DU1718193 
+[2019-11-12 23:05:15] [INFO   ] Next Valid Id: [9] 
+[2019-11-12 23:05:15] [INFO   ] Error. Id: -1, Code: 2104, Msg: Market data farm connection is OK:eufarm
+ 
+[2019-11-12 23:05:15] [INFO   ] Error. Id: -1, Code: 2104, Msg: Market data farm connection is OK:cashfarm
+ 
+[2019-11-12 23:05:15] [INFO   ] Error. Id: -1, Code: 2104, Msg: Market data farm connection is OK:usfarm
+ 
+[2019-11-12 23:05:15] [INFO   ] Error. Id: -1, Code: 2106, Msg: HMDS data farm connection is OK:cashhmds
+ 
+[2019-11-12 23:05:15] [INFO   ] Error. Id: -1, Code: 2106, Msg: HMDS data farm connection is OK:ushmds
+ 
+[2019-11-12 23:05:15] [INFO   ] Error. Id: -1, Code: 2158, Msg: Sec-def data farm connection is OK:secdefnj
+ 
+[2019-11-12 23:05:16] [INFO   ] OpenOrder. ID: -2, EUR, CFD @ SMART: BUY, LMT 4000000.0, Submitted 
+[2019-11-12 23:05:16] [INFO   ] OrderStatus. Id: -2, Status: Submitted, Filled: 0.0, Remaining: 4000000.0, AvgFillPrice: 0.0, PermId: 1222033483, ParentId: 0, LastFillPrice: 0.0, ClientId: 0, WhyHeld: null 
+[2019-11-12 23:05:16] [INFO   ] OpenOrderEnd 
+[2019-11-12 23:05:26] [INFO   ] Exception: Socket closed 

@@ -2,7 +2,7 @@ package com.meshulro;
 
 public class MetaTraderContract {
 	protected static enum Indexes {
-		Instruction(0), Currency1(1), Currency2(2), Relative_Size(3), Stop_Loss(4), Take_Profit(5);
+		Action(0), Currency1(1), Currency2(2), Relative_Size(3), Stop_Loss(4), Take_Profit(5);
 
 		private final int m_value;
 
@@ -15,7 +15,7 @@ public class MetaTraderContract {
 		}
 	};
 
-	protected String m_instruction;
+	protected String m_action;
 
 	protected String m_currency1;
 
@@ -28,8 +28,8 @@ public class MetaTraderContract {
 	protected double m_takeProfit;
 
 	// Getters
-	public String instruction() {
-		return m_instruction;
+	public String action() {
+		return m_action;
 	}
 
 	public String currency1() {
@@ -53,8 +53,8 @@ public class MetaTraderContract {
 	}
 
 	// Setters
-	public void instruction(String v) {
-		m_instruction = v;
+	public void action(String v) {
+		m_action = v;
 	}
 
 	public void currency1(String v) {
@@ -81,10 +81,10 @@ public class MetaTraderContract {
 		final MetaTraderContract l_metaTraderContract = new MetaTraderContract();
 
 		final String[] l_words = p_input.split(";");
-		if (l_words[Indexes.Instruction.getValue()].equals("Close")) {
-			l_metaTraderContract.instruction("Close");
+		if (l_words[Indexes.Action.getValue()].equals("Close")) {
+			l_metaTraderContract.action("Close");
 		} else {
-			l_metaTraderContract.instruction(l_words[Indexes.Instruction.getValue()].equals("Buy") ? "Buy" : "Sell");
+			l_metaTraderContract.action(l_words[Indexes.Action.getValue()].equals("Buy") ? "Buy" : "Sell");
 			l_metaTraderContract.currency1(l_words[Indexes.Currency1.getValue()]);
 			l_metaTraderContract.currency2(l_words[Indexes.Currency2.getValue()]);
 			l_metaTraderContract.relativeSize(Double.valueOf(l_words[Indexes.Relative_Size.getValue()]));
@@ -99,7 +99,7 @@ public class MetaTraderContract {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 
-		add(sb, "Instruction", m_instruction);
+		add(sb, "Action", m_action);
 		add(sb, "Currency 1", m_currency1);
 		add(sb, "Currency 2", m_currency2);
 		add(sb, "Relative Size", m_relativeSize);

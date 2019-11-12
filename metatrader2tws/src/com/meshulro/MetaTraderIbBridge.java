@@ -19,10 +19,16 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import com.ib.client.Contract;
+import com.ib.client.EClientSocket;
+import com.ib.client.EReader;
+import com.ib.client.EReaderSignal;
+import com.ib.client.Order;
+
 public class MetaTraderIbBridge {
 	protected Logger m_logger;
 
-	protected String m_ibAccount;
+	protected EWrapperImpl m_wrapper;
 
 	protected String m_ibLogFilePath;
 
@@ -76,7 +82,10 @@ public class MetaTraderIbBridge {
 			System.exit(1);
 		}
 
-		m_ibAccount = m_properties.getProperty("IbAccount");
+		m_wrapper = new EWrapperImpl(m_logger);
+		m_wrapper.account(m_properties.getProperty("IbAccount"));
+		m_wrapper.tag("AvailableFunds");
+
 		m_ibLogFilePath = m_properties.getProperty(hostname.concat("IbLogFilePath"));
 		m_orderBookFilePath = m_properties.getProperty(hostname.concat("OrderBookFilePath"));
 		m_orderBookLastModified = new File(m_orderBookFilePath).lastModified();
@@ -84,7 +93,7 @@ public class MetaTraderIbBridge {
 			m_logger.severe("Last modified returned 0, file does not exist or if an I/O error occurs, exiting");
 			System.exit(1);
 		} else {
-			m_logger.info("Initialization complete, connected MetaTrader to IB Account ".concat(m_ibAccount));
+			m_logger.info("Initialization complete, connected MetaTrader to IB Account ".concat(m_wrapper.account()));
 			m_logger.info("Order book last modified date "
 					+ new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(m_orderBookLastModified));
 		}
@@ -108,30 +117,98 @@ public class MetaTraderIbBridge {
 						m_logger.severe(e.toString());
 						return;
 					} catch (final IOException e) {
-						m_logger.severe("Failed reading order book file, returing");
+						m_logger.severe("Failed reading order book file, returning");
 						m_logger.severe(e.toString());
 						return;
 					}
 
-					m_logger.info("Order book last modify date "
-							+ new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(m_orderBookLastModified));
+					m_logger.info("New instruction");
 					m_logger.info(l_metaTraderContract.toString());
-					if (l_metaTraderContract.instruction().equals("Close")) {
 
-					} else {
+					final EClientSocket l_client = m_wrapper.getClient();
+					final EReaderSignal l_signal = m_wrapper.getSignal();
+					l_client.eConnect("127.0.0.1", 4002, 0);
 
+					final EReader l_reader = new EReader(l_client, l_signal);
+					l_reader.start();
+					new Thread() {
+						@Override
+						public void run() {
+							while (l_client.isConnected()) {
+								l_signal.waitForSignal();
+								try {
+									l_reader.processMsgs();
+								} catch (final IOException e) {
+									m_logger.severe("Reader encountered IO Exception");
+									m_logger.severe(e.toString());
+								}
+
+							}
+						}
+					}.start();
+
+					try {
+						Thread.sleep(1000);
+					} catch (final InterruptedException e) {
+						m_logger.info("Thread encountered InterruptedException");
+						m_logger.info(e.toString());
 					}
+
+					if (l_metaTraderContract.action().equals("Close")) {
+					} else {
+						final double l_availableFunds = getAvailableFunds();
+						if (l_availableFunds > 0) {
+							final Contract l_contract = new Contract();
+							l_contract.symbol(l_metaTraderContract.currency1());
+							l_contract.secType("CFD");
+							l_contract.currency(l_metaTraderContract.currency2());
+							l_contract.exchange("SMART");
+
+							final Order l_order = new Order();
+							l_order.action(l_metaTraderContract.action());
+							l_order.orderType("MKT");
+							l_order.totalQuantity(Math.round(l_availableFunds * l_metaTraderContract.m_relativeSize));
+
+							l_client.reqIds(-1);
+							l_client.placeOrder(m_wrapper.getCurrentOrderId() + 1, l_contract, l_order);
+						} else {
+							m_logger.severe("getAvailableFunds returned 0, please place order manually");
+						}
+					}
+					try {
+						Thread.sleep(10000);
+					} catch (final InterruptedException e) {
+						m_logger.info("Thread encountered InterruptedException");
+						m_logger.info(e.toString());
+					}
+					l_client.eDisconnect();
 				}
 			}
 		};
 
 		m_scheduler.scheduleAtFixedRate(orderBookReader,
-				ZonedDateTime.now().getSecond() > 30 ? 90 - ZonedDateTime.now().getSecond()
-						: 30 - ZonedDateTime.now().getSecond(),
-				60, SECONDS);
+				ZonedDateTime.now().getSecond() < 15 ? 15 - ZonedDateTime.now().getSecond()
+						: ZonedDateTime.now().getSecond() > 45 ? 75 - ZonedDateTime.now().getSecond()
+								: 45 - ZonedDateTime.now().getSecond(),
+				30, SECONDS);
 	}
 
 	public static void main(String[] args) throws UnknownHostException {
 		new MetaTraderIbBridge().CheckForNewTradingInstructions();
 	}
+
+	protected double getAvailableFunds() {
+		final EClientSocket l_client = m_wrapper.getClient();
+		l_client.reqAccountSummary(1, "All", "AvailableFunds");
+		try {
+			Thread.sleep(2000);
+		} catch (final InterruptedException e) {
+			m_logger.info("Thread encountered InterruptedException");
+			m_logger.info(e.toString());
+		}
+		l_client.cancelAccountSummary(1);
+
+		return m_wrapper.value();
+	}
+
 }
