@@ -41,6 +41,9 @@ public class MetaTraderIbBridge {
 	protected final ScheduledExecutorService m_scheduler = Executors.newScheduledThreadPool(1);
 
 	public MetaTraderIbBridge() {
+		System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$-7s] %5$s %n");
+		m_logger = java.util.logging.Logger.getLogger(MetaTraderIbBridge.class.getName());
+
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(System.getProperty("user.dir").concat("/resources/config.properties"));
@@ -72,8 +75,6 @@ public class MetaTraderIbBridge {
 		m_wrapper.tag("AvailableFunds");
 
 		m_ibLogFilePath = m_properties.getProperty(hostname.concat("IbLogFilePath"));
-		System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$-7s] %5$s %n");
-		m_logger = java.util.logging.Logger.getLogger(MetaTraderIbBridge.class.getName());
 		try {
 			final FileHandler fh = new FileHandler(m_ibLogFilePath, true);
 			fh.setFormatter(new SimpleFormatter());
@@ -86,7 +87,6 @@ public class MetaTraderIbBridge {
 			m_logger.severe(e.toString());
 		}
 
-		
 		m_orderBookFilePath = m_properties.getProperty(hostname.concat("OrderBookFilePath"));
 		m_orderBookLastModified = new File(m_orderBookFilePath).lastModified();
 		if (m_orderBookLastModified == 0) {
@@ -156,27 +156,44 @@ public class MetaTraderIbBridge {
 
 					if (l_metaTraderContract.action().equals("Close")) {
 					} else {
-						final double l_availableFunds = getAvailableFunds();
-						if (l_availableFunds > 0) {
-							final Contract l_contract = new Contract();
-							l_contract.symbol(l_metaTraderContract.currency1());
-							l_contract.secType("CFD");
-							l_contract.currency(l_metaTraderContract.currency2());
-							l_contract.exchange("SMART");
+						final double l_totalQuantity = Math
+								.round(l_metaTraderContract.m_relativeSize * getAvailableFunds());
+						if (l_totalQuantity > 0) {
+							final Contract l_marketContract = new Contract();
+							l_marketContract.symbol(l_metaTraderContract.currency1());
+							l_marketContract.secType("CASH");
+							l_marketContract.currency(l_metaTraderContract.currency2());
+							l_marketContract.exchange("IDEALPRO");
 
-							final Order l_order = new Order();
-							l_order.action(l_metaTraderContract.action());
-							l_order.orderType("MKT");
-							l_order.totalQuantity(Math.round(l_availableFunds * l_metaTraderContract.m_relativeSize));
+							final Order l_marketOrder = new Order();
+							l_marketOrder.action(l_metaTraderContract.action());
+							l_marketOrder.orderType("MKT");
+							l_marketOrder.totalQuantity(l_totalQuantity);
 
 							l_client.reqIds(-1);
-							l_client.placeOrder(m_wrapper.getCurrentOrderId() + 1, l_contract, l_order);
+							l_client.placeOrder(m_wrapper.getCurrentOrderId() + 1, l_marketContract, l_marketOrder);
+
+							if (l_metaTraderContract.m_takeProfit > 0) {
+								final Contract l_limitContract = new Contract();
+								l_limitContract.symbol(l_metaTraderContract.currency1());
+								l_limitContract.secType("CASH");
+								l_limitContract.currency(l_metaTraderContract.currency2());
+								l_limitContract.exchange("IDEALPRO");
+
+								final Order l_limitOrder = new Order();
+								l_limitOrder.action(l_metaTraderContract.action() == "Buy" ? "Sell" : "Buy");
+								l_limitOrder.orderType("LMT");
+								l_limitOrder.totalQuantity(l_totalQuantity);
+								l_limitOrder.lmtPrice(l_metaTraderContract.takepProfit());
+
+								l_client.placeOrder(m_wrapper.getCurrentOrderId() + 1, l_limitContract, l_limitOrder);
+							}
 						} else {
 							m_logger.severe("getAvailableFunds returned 0, please place order manually");
 						}
 					}
 					try {
-						Thread.sleep(10000);
+						Thread.sleep(60000);
 					} catch (final InterruptedException e) {
 						m_logger.info("Thread encountered InterruptedException");
 						m_logger.info(e.toString());
@@ -210,5 +227,4 @@ public class MetaTraderIbBridge {
 
 		return m_wrapper.value();
 	}
-
 }
