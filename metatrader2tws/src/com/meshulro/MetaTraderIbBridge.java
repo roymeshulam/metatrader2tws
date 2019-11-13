@@ -41,21 +41,6 @@ public class MetaTraderIbBridge {
 	protected final ScheduledExecutorService m_scheduler = Executors.newScheduledThreadPool(1);
 
 	public MetaTraderIbBridge() {
-		System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$-7s] %5$s %n");
-		m_logger = java.util.logging.Logger.getLogger(MetaTraderIbBridge.class.getName());
-
-		try {
-			final FileHandler fh = new FileHandler(System.getProperty("user.dir").concat("/logs/log.txt"), true);
-			fh.setFormatter(new SimpleFormatter());
-			m_logger.addHandler(fh);
-		} catch (final SecurityException e) {
-			m_logger.severe("Security exception creating the log file");
-			m_logger.severe(e.toString());
-		} catch (final IOException e) {
-			m_logger.severe("IO error when creating the log file");
-			m_logger.severe(e.toString());
-		}
-
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(System.getProperty("user.dir").concat("/resources/config.properties"));
@@ -87,6 +72,21 @@ public class MetaTraderIbBridge {
 		m_wrapper.tag("AvailableFunds");
 
 		m_ibLogFilePath = m_properties.getProperty(hostname.concat("IbLogFilePath"));
+		System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$-7s] %5$s %n");
+		m_logger = java.util.logging.Logger.getLogger(MetaTraderIbBridge.class.getName());
+		try {
+			final FileHandler fh = new FileHandler(m_ibLogFilePath, true);
+			fh.setFormatter(new SimpleFormatter());
+			m_logger.addHandler(fh);
+		} catch (final SecurityException e) {
+			m_logger.severe("Security exception creating the log file");
+			m_logger.severe(e.toString());
+		} catch (final IOException e) {
+			m_logger.severe("IO error when creating the log file");
+			m_logger.severe(e.toString());
+		}
+
+		
 		m_orderBookFilePath = m_properties.getProperty(hostname.concat("OrderBookFilePath"));
 		m_orderBookLastModified = new File(m_orderBookFilePath).lastModified();
 		if (m_orderBookLastModified == 0) {

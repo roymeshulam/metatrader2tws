@@ -3,6 +3,7 @@
 	<name>metatrader2tws</name>
 	<comment></comment>
 	<projects>
+		<project>javaclient</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
