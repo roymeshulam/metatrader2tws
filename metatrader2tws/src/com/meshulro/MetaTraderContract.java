@@ -1,7 +1,7 @@
 package com.meshulro;
 
 public class MetaTraderContract {
-	protected static enum Indexes {
+	protected enum Indexes {
 		Action(0), Currency1(1), Currency2(2), Relative_Size(3), Stop_Loss(4), Take_Profit(5);
 
 		private final int m_value;
@@ -13,7 +13,7 @@ public class MetaTraderContract {
 		public int getValue() {
 			return m_value;
 		}
-	};
+	}
 
 	protected String m_action;
 
@@ -53,31 +53,31 @@ public class MetaTraderContract {
 	}
 
 	// Setters
-	public void action(String v) {
+	public void action(final String v) {
 		m_action = v;
 	}
 
-	public void currency1(String v) {
+	public void currency1(final String v) {
 		m_currency1 = v;
 	}
 
-	public void currency2(String v) {
+	public void currency2(final String v) {
 		m_currency2 = v;
 	}
 
-	public void relativeSize(double v) {
+	public void relativeSize(final double v) {
 		m_relativeSize = v;
 	}
 
-	public void stopLoss(double v) {
+	public void stopLoss(final double v) {
 		m_stopLoss = v;
 	}
 
-	public void takeProfit(double v) {
+	public void takeProfit(final double v) {
 		m_takeProfit = v;
 	}
 
-	public static MetaTraderContract FromString(String p_input) {
+	public static MetaTraderContract FromString(final String p_input) {
 		final MetaTraderContract l_metaTraderContract = new MetaTraderContract();
 
 		final String[] l_words = p_input.split(";");
@@ -109,14 +109,14 @@ public class MetaTraderContract {
 		return sb.toString();
 	}
 
-	public static void add(StringBuilder sb, String tag, Object val) {
+	public static void add(final StringBuilder sb, final String tag, final Object val) {
 		if (val == null || val instanceof String && ((String) val).length() == 0) {
 			return;
 		}
 
 		sb.append(tag);
-		sb.append('\t');
+		sb.append(" - ");
 		sb.append(val);
-		sb.append('\n');
+		sb.append(",\t");
 	}
 }

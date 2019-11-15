@@ -1,5 +1,7 @@
 package com.meshulro;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -28,6 +30,10 @@ public class EWrapperImpl implements EWrapper {
 
 	protected Logger m_logger;
 
+	protected List<Order> m_orders;
+
+	protected List<Contract> m_contracts;
+
 	public String tag() {
 		return m_tag;
 	}
@@ -40,15 +46,23 @@ public class EWrapperImpl implements EWrapper {
 		return m_account;
 	}
 
-	public void tag(String v) {
+	public List<Contract> contracts() {
+		return m_contracts;
+	}
+
+	public List<Order> orders() {
+		return m_orders;
+	}
+
+	public void tag(final String v) {
 		m_tag = v;
 	}
 
-	public void value(double v) {
+	public void value(final double v) {
 		m_value = v;
 	}
 
-	public void account(String v) {
+	public void account(final String v) {
 		m_account = v;
 	}
 
@@ -59,10 +73,13 @@ public class EWrapperImpl implements EWrapper {
 	// ! [socket_declare]
 
 	// ! [socket_init]
-	public EWrapperImpl(Logger p_logger) {
+	public EWrapperImpl(final Logger p_logger) {
 		m_logger = p_logger;
 		readerSignal = new EJavaSignal();
 		clientSocket = new EClientSocket(this, readerSignal);
+
+		m_orders = new LinkedList<>();
+		m_contracts = new LinkedList<>();
 	}
 
 	// ! [socket_init]
@@ -78,9 +95,14 @@ public class EWrapperImpl implements EWrapper {
 		return currentOrderId;
 	}
 
+	public void initialize() {
+		m_orders.clear();
+		m_contracts.clear();
+	}
+
 	// ! [tickprice]
 	@Override
-	public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
+	public void tickPrice(final int tickerId, final int field, final double price, final int canAutoExecute) {
 		m_logger.info("Tick Price. Ticker Id:" + tickerId + ", Field: " + field + ", Price: " + price
 				+ ", CanAutoExecute: " + canAutoExecute);
 	}
@@ -88,15 +110,16 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [ticksize]
 	@Override
-	public void tickSize(int tickerId, int field, int size) {
+	public void tickSize(final int tickerId, final int field, final int size) {
 		m_logger.info("Tick Size. Ticker Id:" + tickerId + ", Field: " + field + ", Size: " + size);
 	}
 	// ! [ticksize]
 
 	// ! [tickoptioncomputation]
 	@Override
-	public void tickOptionComputation(int tickerId, int field, double impliedVol, double delta, double optPrice,
-			double pvDividend, double gamma, double vega, double theta, double undPrice) {
+	public void tickOptionComputation(final int tickerId, final int field, final double impliedVol, final double delta,
+			final double optPrice, final double pvDividend, final double gamma, final double vega, final double theta,
+			final double undPrice) {
 		m_logger.info("TickOptionComputation. TickerId: " + tickerId + ", field: " + field + ", ImpliedVolatility: "
 				+ impliedVol + ", Delta: " + delta + ", OptionPrice: " + optPrice + ", pvDividend: " + pvDividend
 				+ ", Gamma: " + gamma + ", Vega: " + vega + ", Theta: " + theta + ", UnderlyingPrice: " + undPrice);
@@ -105,7 +128,7 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [tickgeneric]
 	@Override
-	public void tickGeneric(int tickerId, int tickType, double value) {
+	public void tickGeneric(final int tickerId, final int tickType, final double value) {
 		m_logger.info("Tick Generic. Ticker Id:" + tickerId + ", Field: " + TickType.getField(tickType) + ", Value: "
 				+ value);
 	}
@@ -113,15 +136,15 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [tickstring]
 	@Override
-	public void tickString(int tickerId, int tickType, String value) {
+	public void tickString(final int tickerId, final int tickType, final String value) {
 		m_logger.info("Tick string. Ticker Id:" + tickerId + ", Type: " + tickType + ", Value: " + value);
 	}
 
 	// ! [tickstring]
 	@Override
-	public void tickEFP(int tickerId, int tickType, double basisPoints, String formattedBasisPoints,
-			double impliedFuture, int holdDays, String futureLastTradeDate, double dividendImpact,
-			double dividendsToLastTradeDate) {
+	public void tickEFP(final int tickerId, final int tickType, final double basisPoints,
+			final String formattedBasisPoints, final double impliedFuture, final int holdDays,
+			final String futureLastTradeDate, final double dividendImpact, final double dividendsToLastTradeDate) {
 		m_logger.info("TickEFP. " + tickerId + ", Type: " + tickType + ", BasisPoints: " + basisPoints
 				+ ", FormattedBasisPoints: " + formattedBasisPoints + ", ImpliedFuture: " + impliedFuture
 				+ ", HoldDays: " + holdDays + ", FutureLastTradeDate: " + futureLastTradeDate + ", DividendImpact: "
@@ -130,8 +153,9 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [orderstatus]
 	@Override
-	public void orderStatus(int orderId, String status, double filled, double remaining, double avgFillPrice,
-			int permId, int parentId, double lastFillPrice, int clientId, String whyHeld) {
+	public void orderStatus(final int orderId, final String status, final double filled, final double remaining,
+			final double avgFillPrice, final int permId, final int parentId, final double lastFillPrice,
+			final int clientId, final String whyHeld) {
 		m_logger.info("OrderStatus. Id: " + orderId + ", Status: " + status + ", Filled: " + filled + ", Remaining: "
 				+ remaining + ", AvgFillPrice: " + avgFillPrice + ", PermId: " + permId + ", ParentId: " + parentId
 				+ ", LastFillPrice: " + lastFillPrice + ", ClientId: " + clientId + ", WhyHeld: " + whyHeld);
@@ -140,7 +164,7 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [openorder]
 	@Override
-	public void openOrder(int orderId, Contract contract, Order order, OrderState orderState) {
+	public void openOrder(final int orderId, final Contract contract, final Order order, final OrderState orderState) {
 		m_logger.info("OpenOrder. ID: " + orderId + ", " + contract.symbol() + ", " + contract.secType() + " @ "
 				+ contract.exchange() + ": " + order.action() + ", " + order.orderType() + " " + order.totalQuantity()
 				+ ", " + orderState.status());
@@ -156,7 +180,8 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [updateaccountvalue]
 	@Override
-	public void updateAccountValue(String key, String value, String currency, String accountName) {
+	public void updateAccountValue(final String key, final String value, final String currency,
+			final String accountName) {
 		m_logger.info("UpdateAccountValue. Key: " + key + ", Value: " + value + ", Currency: " + currency
 				+ ", AccountName: " + accountName);
 	}
@@ -164,8 +189,9 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [updateportfolio]
 	@Override
-	public void updatePortfolio(Contract contract, double position, double marketPrice, double marketValue,
-			double averageCost, double unrealizedPNL, double realizedPNL, String accountName) {
+	public void updatePortfolio(final Contract contract, final double position, final double marketPrice,
+			final double marketValue, final double averageCost, final double unrealizedPNL, final double realizedPNL,
+			final String accountName) {
 		m_logger.info("UpdatePortfolio. " + contract.symbol() + ", " + contract.secType() + " @ " + contract.exchange()
 				+ ": Position: " + position + ", MarketPrice: " + marketPrice + ", MarketValue: " + marketValue
 				+ ", AverageCost: " + averageCost + ", UnrealisedPNL: " + unrealizedPNL + ", RealisedPNL: "
@@ -175,21 +201,21 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [updateaccounttime]
 	@Override
-	public void updateAccountTime(String timeStamp) {
+	public void updateAccountTime(final String timeStamp) {
 		m_logger.info("UpdateAccountTime. Time: " + timeStamp + "\n");
 	}
 	// ! [updateaccounttime]
 
 	// ! [accountdownloadend]
 	@Override
-	public void accountDownloadEnd(String accountName) {
+	public void accountDownloadEnd(final String accountName) {
 		m_logger.info("Account download finished: " + accountName + "\n");
 	}
 	// ! [accountdownloadend]
 
 	// ! [nextvalidid]
 	@Override
-	public void nextValidId(int orderId) {
+	public void nextValidId(final int orderId) {
 		m_logger.info("Next Valid Id: [" + orderId + "]");
 		currentOrderId = orderId;
 	}
@@ -197,7 +223,7 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [contractdetails]
 	@Override
-	public void contractDetails(int reqId, ContractDetails contractDetails) {
+	public void contractDetails(final int reqId, final ContractDetails contractDetails) {
 		m_logger.info("ContractDetails. ReqId: [" + reqId + "] - [" + contractDetails.contract().symbol() + "], ["
 				+ contractDetails.contract().secType() + "], ConId: [" + contractDetails.contract().conid() + "] @ ["
 				+ contractDetails.contract().exchange() + "]");
@@ -205,20 +231,20 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [contractdetails]
 	@Override
-	public void bondContractDetails(int reqId, ContractDetails contractDetails) {
+	public void bondContractDetails(final int reqId, final ContractDetails contractDetails) {
 		m_logger.info("bondContractDetails");
 	}
 
 	// ! [contractdetailsend]
 	@Override
-	public void contractDetailsEnd(int reqId) {
+	public void contractDetailsEnd(final int reqId) {
 		m_logger.info("ContractDetailsEnd. " + reqId + "\n");
 	}
 	// ! [contractdetailsend]
 
 	// ! [execdetails]
 	@Override
-	public void execDetails(int reqId, Contract contract, Execution execution) {
+	public void execDetails(final int reqId, final Contract contract, final Execution execution) {
 		m_logger.info("ExecDetails. " + reqId + " - [" + contract.symbol() + "], [" + contract.secType() + "], ["
 				+ contract.currency() + "], [" + execution.execId() + "], [" + execution.orderId() + "], ["
 				+ execution.shares() + "]");
@@ -227,28 +253,30 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [execdetailsend]
 	@Override
-	public void execDetailsEnd(int reqId) {
+	public void execDetailsEnd(final int reqId) {
 		m_logger.info("ExecDetailsEnd. " + reqId + "\n");
 	}
 	// ! [execdetailsend]
 
 	// ! [updatemktdepth]
 	@Override
-	public void updateMktDepth(int tickerId, int position, int operation, int side, double price, int size) {
+	public void updateMktDepth(final int tickerId, final int position, final int operation, final int side,
+			final double price, final int size) {
 		m_logger.info("UpdateMarketDepth. " + tickerId + " - Position: " + position + ", Operation: " + operation
 				+ ", Side: " + side + ", Price: " + price + ", Size: " + size + "");
 	}
 
 	// ! [updatemktdepth]
 	@Override
-	public void updateMktDepthL2(int tickerId, int position, String marketMaker, int operation, int side, double price,
-			int size) {
+	public void updateMktDepthL2(final int tickerId, final int position, final String marketMaker, final int operation,
+			final int side, final double price, final int size) {
 		m_logger.info("updateMktDepthL2");
 	}
 
 	// ! [updatenewsbulletin]
 	@Override
-	public void updateNewsBulletin(int msgId, int msgType, String message, String origExchange) {
+	public void updateNewsBulletin(final int msgId, final int msgType, final String message,
+			final String origExchange) {
 		m_logger.info("News Bulletins. " + msgId + " - Type: " + msgType + ", Message: " + message
 				+ ", Exchange of Origin: " + origExchange + "\n");
 	}
@@ -256,22 +284,23 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [managedaccounts]
 	@Override
-	public void managedAccounts(String accountsList) {
+	public void managedAccounts(final String accountsList) {
 		m_logger.info("Account list: " + accountsList);
 	}
 	// ! [managedaccounts]
 
 	// ! [receivefa]
 	@Override
-	public void receiveFA(int faDataType, String xml) {
+	public void receiveFA(final int faDataType, final String xml) {
 		m_logger.info("Receing FA: " + faDataType + " - " + xml);
 	}
 	// ! [receivefa]
 
 	// ! [historicaldata]
 	@Override
-	public void historicalData(int reqId, String date, double open, double high, double low, double close, int volume,
-			int count, double WAP, boolean hasGaps) {
+	public void historicalData(final int reqId, final String date, final double open, final double high,
+			final double low, final double close, final int volume, final int count, final double WAP,
+			final boolean hasGaps) {
 		m_logger.info("HistoricalData. " + reqId + " - Date: " + date + ", Open: " + open + ", High: " + high
 				+ ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP
 				+ ", HasGaps: " + hasGaps);
@@ -280,15 +309,15 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [scannerparameters]
 	@Override
-	public void scannerParameters(String xml) {
+	public void scannerParameters(final String xml) {
 		m_logger.info("ScannerParameters. " + xml + "\n");
 	}
 	// ! [scannerparameters]
 
 	// ! [scannerdata]
 	@Override
-	public void scannerData(int reqId, int rank, ContractDetails contractDetails, String distance, String benchmark,
-			String projection, String legsStr) {
+	public void scannerData(final int reqId, final int rank, final ContractDetails contractDetails,
+			final String distance, final String benchmark, final String projection, final String legsStr) {
 		m_logger.info("ScannerData. " + reqId + " - Rank: " + rank + ", Symbol: " + contractDetails.contract().symbol()
 				+ ", SecType: " + contractDetails.contract().secType() + ", Currency: "
 				+ contractDetails.contract().currency() + ", Distance: " + distance + ", Benchmark: " + benchmark
@@ -298,54 +327,54 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [scannerdataend]
 	@Override
-	public void scannerDataEnd(int reqId) {
+	public void scannerDataEnd(final int reqId) {
 		m_logger.info("ScannerDataEnd. " + reqId);
 	}
 	// ! [scannerdataend]
 
 	// ! [realtimebar]
 	@Override
-	public void realtimeBar(int reqId, long time, double open, double high, double low, double close, long volume,
-			double wap, int count) {
+	public void realtimeBar(final int reqId, final long time, final double open, final double high, final double low,
+			final double close, final long volume, final double wap, final int count) {
 		m_logger.info("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: "
 				+ low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + wap);
 	}
 
 	// ! [realtimebar]
 	@Override
-	public void currentTime(long time) {
+	public void currentTime(final long time) {
 		m_logger.info("currentTime");
 	}
 
 	// ! [fundamentaldata]
 	@Override
-	public void fundamentalData(int reqId, String data) {
+	public void fundamentalData(final int reqId, final String data) {
 		m_logger.info("FundamentalData. ReqId: [" + reqId + "] - Data: [" + data + "]");
 	}
 
 	// ! [fundamentaldata]
 	@Override
-	public void deltaNeutralValidation(int reqId, DeltaNeutralContract underComp) {
+	public void deltaNeutralValidation(final int reqId, final DeltaNeutralContract underComp) {
 		m_logger.info("deltaNeutralValidation");
 	}
 
 	// ! [ticksnapshotend]
 	@Override
-	public void tickSnapshotEnd(int reqId) {
+	public void tickSnapshotEnd(final int reqId) {
 		m_logger.info("TickSnapshotEnd: " + reqId);
 	}
 	// ! [ticksnapshotend]
 
 	// ! [marketdatatype]
 	@Override
-	public void marketDataType(int reqId, int marketDataType) {
+	public void marketDataType(final int reqId, final int marketDataType) {
 		m_logger.info("MarketDataType. [" + reqId + "], Type: [" + marketDataType + "]\n");
 	}
 	// ! [marketdatatype]
 
 	// ! [commissionreport]
 	@Override
-	public void commissionReport(CommissionReport commissionReport) {
+	public void commissionReport(final CommissionReport commissionReport) {
 		m_logger.info("CommissionReport. [" + commissionReport.m_execId + "] - [" + commissionReport.m_commission
 				+ "] [" + commissionReport.m_currency + "] RPNL [" + commissionReport.m_realizedPNL + "]");
 	}
@@ -353,10 +382,21 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [position]
 	@Override
-	public void position(String account, Contract contract, double pos, double avgCost) {
-		System.out
-				.println("Position. " + account + " - Symbol: " + contract.symbol() + ", SecType: " + contract.secType()
-						+ ", Currency: " + contract.currency() + ", Position: " + pos + ", Avg cost: " + avgCost);
+	public void position(final String account, final Contract contract, final double pos, final double avgCost) {
+		if (account.equals(m_account) && pos > 0) {
+			final Order l_order = new Order();
+			l_order.action(pos > 0 ? "Buy" : "Sell");
+			l_order.orderType("MKT");
+			l_order.totalQuantity(Math.abs(pos));
+			m_orders.add(l_order);
+
+			contract.exchange(contract.getSecType().equals("CFD") ? "SMART" : "IDEALPRO");
+			m_contracts.add(contract);
+
+			m_logger.info(
+					"Position. " + account + " - Symbol: " + contract.symbol() + ", SecType: " + contract.secType()
+							+ ", Currency: " + contract.currency() + ", Position: " + pos + ", Avg cost: " + avgCost);
+		}
 	}
 	// ! [position]
 
@@ -369,7 +409,8 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [accountsummary]
 	@Override
-	public void accountSummary(int reqId, String account, String tag, String value, String currency) {
+	public void accountSummary(final int reqId, final String account, final String tag, final String value,
+			final String currency) {
 		if (account.equals(m_account) && tag.equals(m_tag)) {
 			m_logger.info("Acct Summary. ReqId: " + reqId + ", Acct: " + account + ", Tag: " + tag + ", Value: " + value
 					+ ", Currency: " + currency);
@@ -380,59 +421,61 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [accountsummaryend]
 	@Override
-	public void accountSummaryEnd(int reqId) {
+	public void accountSummaryEnd(final int reqId) {
 		m_logger.info("AccountSummaryEnd. Req Id: " + reqId + "\n");
 	}
 
 	// ! [accountsummaryend]
 	@Override
-	public void verifyMessageAPI(String apiData) {
+	public void verifyMessageAPI(final String apiData) {
 		m_logger.info("verifyMessageAPI");
 	}
 
 	@Override
-	public void verifyCompleted(boolean isSuccessful, String errorText) {
+	public void verifyCompleted(final boolean isSuccessful, final String errorText) {
 		m_logger.info("verifyCompleted");
 	}
 
 	@Override
-	public void verifyAndAuthMessageAPI(String apiData, String xyzChallange) {
+	public void verifyAndAuthMessageAPI(final String apiData, final String xyzChallange) {
 		m_logger.info("verifyAndAuthMessageAPI");
 	}
 
 	@Override
-	public void verifyAndAuthCompleted(boolean isSuccessful, String errorText) {
+	public void verifyAndAuthCompleted(final boolean isSuccessful, final String errorText) {
 		m_logger.info("verifyAndAuthCompleted");
 	}
 
 	// ! [displaygrouplist]
 	@Override
-	public void displayGroupList(int reqId, String groups) {
+	public void displayGroupList(final int reqId, final String groups) {
 		m_logger.info("Display Group List. ReqId: " + reqId + ", Groups: " + groups + "\n");
 	}
 	// ! [displaygrouplist]
 
 	// ! [displaygroupupdated]
 	@Override
-	public void displayGroupUpdated(int reqId, String contractInfo) {
+	public void displayGroupUpdated(final int reqId, final String contractInfo) {
 		m_logger.info("Display Group Updated. ReqId: " + reqId + ", Contract info: " + contractInfo + "\n");
 	}
 
 	// ! [displaygroupupdated]
 	@Override
-	public void error(Exception e) {
+	public void error(final Exception e) {
 		m_logger.info("Exception: " + e.getMessage());
 	}
 
 	@Override
-	public void error(String str) {
+	public void error(final String str) {
 		m_logger.info("Error STR");
 	}
 
 	// ! [m_logger.info]
 	@Override
-	public void error(int id, int errorCode, String errorMsg) {
-		m_logger.info("Error. Id: " + id + ", Code: " + errorCode + ", Msg: " + errorMsg + "\n");
+	public void error(final int id, final int errorCode, final String errorMsg) {
+		if (id != -1) {
+			m_logger.info("Error. Id: " + id + ", Code: " + errorCode + ", Msg: " + errorMsg + "\n");
+		}
 	}
 
 	// ! [error]
@@ -453,8 +496,8 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [positionmulti]
 	@Override
-	public void positionMulti(int reqId, String account, String modelCode, Contract contract, double pos,
-			double avgCost) {
+	public void positionMulti(final int reqId, final String account, final String modelCode, final Contract contract,
+			final double pos, final double avgCost) {
 		m_logger.info("Position Multi. Request: " + reqId + ", Account: " + account + ", ModelCode: " + modelCode
 				+ ", Symbol: " + contract.symbol() + ", SecType: " + contract.secType() + ", Currency: "
 				+ contract.currency() + ", Position: " + pos + ", Avg cost: " + avgCost + "\n");
@@ -463,15 +506,15 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [positionmultiend]
 	@Override
-	public void positionMultiEnd(int reqId) {
+	public void positionMultiEnd(final int reqId) {
 		m_logger.info("Position Multi End. Request: " + reqId + "\n");
 	}
 	// ! [positionmultiend]
 
 	// ! [accountupdatemulti]
 	@Override
-	public void accountUpdateMulti(int reqId, String account, String modelCode, String key, String value,
-			String currency) {
+	public void accountUpdateMulti(final int reqId, final String account, final String modelCode, final String key,
+			final String value, final String currency) {
 		m_logger.info("Account Update Multi. Request: " + reqId + ", Account: " + account + ", ModelCode: " + modelCode
 				+ ", Key: " + key + ", Value: " + value + ", Currency: " + currency + "\n");
 	}
@@ -479,30 +522,31 @@ public class EWrapperImpl implements EWrapper {
 
 	// ! [accountupdatemultiend]
 	@Override
-	public void accountUpdateMultiEnd(int reqId) {
+	public void accountUpdateMultiEnd(final int reqId) {
 		m_logger.info("Account Update Multi End. Request: " + reqId + "\n");
 	}
 	// ! [accountupdatemultiend]
 
 	// ! [securityDefinitionOptionParameter]
 	@Override
-	public void securityDefinitionOptionalParameter(int reqId, String exchange, int underlyingConId,
-			String tradingClass, String multiplier, Set<String> expirations, Set<Double> strikes) {
+	public void securityDefinitionOptionalParameter(final int reqId, final String exchange, final int underlyingConId,
+			final String tradingClass, final String multiplier, final Set<String> expirations,
+			final Set<Double> strikes) {
 		m_logger.info("Security Definition Optional Parameter. Request: " + reqId + ", Trading Class: " + tradingClass
 				+ ", Multiplier: " + multiplier + " \n");
 	}
 
 	// ! [securityDefinitionOptionParameter]
 	@Override
-	public void securityDefinitionOptionalParameterEnd(int reqId) {
+	public void securityDefinitionOptionalParameterEnd(final int reqId) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void softDollarTiers(int reqId, SoftDollarTier[] tiers) {
+	public void softDollarTiers(final int reqId, final SoftDollarTier[] tiers) {
 		for (final SoftDollarTier tier : tiers) {
-			System.out.print("tier: " + tier + ", ");
+			m_logger.info("tier: " + tier + ", ");
 		}
 
 		m_logger.info("");

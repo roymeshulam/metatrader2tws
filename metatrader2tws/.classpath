@@ -6,6 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="libraries/TwsApi.jar" sourcepath="/javaclient"/>
+	<classpathentry kind="lib" path="libraries/TwsApi.jar" sourcepath="/Users/roymeshulam/IBJts/source/JavaClient"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

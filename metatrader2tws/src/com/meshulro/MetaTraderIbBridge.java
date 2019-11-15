@@ -60,9 +60,9 @@ public class MetaTraderIbBridge {
 			System.exit(1);
 		}
 
-		String hostname = null;
+		String l_hostname = null;
 		try {
-			hostname = InetAddress.getLocalHost().getHostName();
+			l_hostname = InetAddress.getLocalHost().getHostName();
 		} catch (final UnknownHostException e) {
 			m_logger.severe("Failed getting hostname, exiting");
 			m_logger.severe(e.toString());
@@ -73,11 +73,11 @@ public class MetaTraderIbBridge {
 		m_wrapper.account(m_properties.getProperty("IbAccount"));
 		m_wrapper.tag("AvailableFunds");
 
-		m_ibLogFilePath = m_properties.getProperty(hostname.concat("IbLogFilePath"));
+		m_ibLogFilePath = m_properties.getProperty(l_hostname.concat("IbLogFilePath"));
 		try {
-			final FileHandler fh = new FileHandler(m_ibLogFilePath, true);
-			fh.setFormatter(new SimpleFormatter());
-			m_logger.addHandler(fh);
+			final FileHandler l_fileHandler = new FileHandler(m_ibLogFilePath, true);
+			l_fileHandler.setFormatter(new SimpleFormatter());
+			m_logger.addHandler(l_fileHandler);
 		} catch (final SecurityException e) {
 			m_logger.severe("Security exception creating the log file");
 			m_logger.severe(e.toString());
@@ -86,13 +86,25 @@ public class MetaTraderIbBridge {
 			m_logger.severe(e.toString());
 		}
 
-		m_orderBookFilePath = m_properties.getProperty(hostname.concat("OrderBookFilePath"));
+		final TelegramHandler l_telegramHandler = new TelegramHandler(m_properties.getProperty("TelegramBotToken"),
+				m_properties.getProperty("TelegramChatId"));
+		l_telegramHandler.setFormatter(new SimpleFormatter());
+		m_logger.addHandler(l_telegramHandler);
+
+		m_orderBookFilePath = m_properties.getProperty(l_hostname.concat("OrderBookFilePath"));
 		m_orderBookLastModified = new File(m_orderBookFilePath).lastModified();
 		if (m_orderBookLastModified == 0) {
 			m_logger.severe("Last modified returned 0, file does not exist or if an I/O error occurs, exiting");
 			System.exit(1);
 		} else {
-			m_logger.info("Initialization complete, connected MetaTrader to IB Account ".concat(m_wrapper.account()));
+			m_logger.info("Initialization complete on ".concat(l_hostname)
+					.concat(", connected MetaTrader to IB Account ").concat(m_wrapper.account()));
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					m_logger.info("Performing shutdown");
+				}
+			});
 		}
 	}
 
@@ -149,13 +161,57 @@ public class MetaTraderIbBridge {
 					m_logger.info(e3.toString());
 				}
 
-				if (l_metaTraderContract.action().equals("Close")) {
-				} else {
-					final double l_totalQuantity = Math
-							.round(l_metaTraderContract.m_relativeSize * getAvailableFunds());
-					if (l_totalQuantity > 0) {
-						int l_currentOrderId = m_wrapper.getCurrentOrderId();
+				int l_currentOrderId = m_wrapper.getCurrentOrderId();
 
+				if (l_metaTraderContract.action().equals("Close")) {
+					m_logger.info("Cancelling all orders");
+					m_wrapper.getClient().reqGlobalCancel();
+					try {
+						Thread.sleep(5000);
+					} catch (final InterruptedException e) {
+						m_logger.info("Thread encountered InterruptedException");
+						m_logger.info(e.toString());
+					}
+
+					m_logger.info("Closing all positions");
+					m_wrapper.getClient().reqPositions();
+					try {
+						Thread.sleep(5000);
+					} catch (final InterruptedException e) {
+						m_logger.info("Thread encountered InterruptedException");
+						m_logger.info(e.toString());
+					}
+					m_wrapper.getClient().cancelPositions();
+
+					for (int i = m_wrapper.orders().size() - 1; i >= 0; i--) {
+						final Order l_marketOrder = new Order();
+						l_marketOrder.action(m_wrapper.orders().get(i).getAction().equals("Buy") ? "Sell" : "Buy");
+						l_marketOrder.orderType("MKT");
+						l_marketOrder.totalQuantity(m_wrapper.orders().get(i).totalQuantity());
+
+						m_logger.info("Placing market order");
+						l_client.placeOrder(l_currentOrderId++, m_wrapper.contracts().get(i), l_marketOrder);
+						try {
+							Thread.sleep(5000);
+						} catch (final InterruptedException e) {
+							m_logger.info("Thread encountered InterruptedException");
+							m_logger.info(e.toString());
+						}
+					}
+					m_wrapper.initialize();
+				} else {
+					m_wrapper.getClient().reqAccountSummary(1, "All", "AvailableFunds");
+					try {
+						Thread.sleep(10000);
+					} catch (final InterruptedException e) {
+						m_logger.info("Thread encountered InterruptedException");
+						m_logger.info(e.toString());
+					}
+					m_wrapper.getClient().cancelAccountSummary(1);
+
+					final double l_totalQuantity = Math.round(l_metaTraderContract.m_relativeSize * m_wrapper.value());
+					m_logger.info("Positions total quantity = ".concat(Double.toString(l_totalQuantity)));
+					if (l_totalQuantity > 0) {
 						final Contract l_marketContract = new Contract();
 						l_marketContract.secType("CFD");
 						l_marketContract.exchange("SMART");
@@ -167,15 +223,13 @@ public class MetaTraderIbBridge {
 						l_marketOrder.orderType("MKT");
 						l_marketOrder.totalQuantity(l_totalQuantity);
 
-						m_logger.info(
-								"Placing market order " + l_marketContract.toString() + " " + l_marketOrder.toString());
+						m_logger.info("Placing market order");
 						l_client.placeOrder(l_currentOrderId++, l_marketContract, l_marketOrder);
-
 						try {
-							Thread.sleep(10000);
-						} catch (final InterruptedException e4) {
+							Thread.sleep(5000);
+						} catch (final InterruptedException e) {
 							m_logger.info("Thread encountered InterruptedException");
-							m_logger.info(e4.toString());
+							m_logger.info(e.toString());
 						}
 
 						if (l_metaTraderContract.m_takeProfit > 0) {
@@ -192,15 +246,13 @@ public class MetaTraderIbBridge {
 							l_limitOrder.totalQuantity(l_totalQuantity);
 							l_limitOrder.lmtPrice(l_metaTraderContract.takepProfit());
 
-							m_logger.info("Placing limit order " + l_limitContract.toString() + " "
-									+ l_limitOrder.toString());
+							m_logger.info("Placing limit order");
 							l_client.placeOrder(l_currentOrderId++, l_limitContract, l_limitOrder);
-
 							try {
-								Thread.sleep(10000);
-							} catch (final InterruptedException e5) {
+								Thread.sleep(15000);
+							} catch (final InterruptedException e) {
 								m_logger.info("Thread encountered InterruptedException");
-								m_logger.info(e5.toString());
+								m_logger.info(e.toString());
 							}
 						}
 					} else {
@@ -209,9 +261,9 @@ public class MetaTraderIbBridge {
 				}
 				try {
 					Thread.sleep(60000);
-				} catch (final InterruptedException e6) {
+				} catch (final InterruptedException e) {
 					m_logger.info("Thread encountered InterruptedException");
-					m_logger.info(e6.toString());
+					m_logger.info(e.toString());
 				}
 				l_client.eDisconnect();
 			}
@@ -224,21 +276,7 @@ public class MetaTraderIbBridge {
 				30, SECONDS);
 	}
 
-	public static void main(String[] args) throws UnknownHostException {
+	public static void main(final String[] args) {
 		new MetaTraderIbBridge().CheckForNewTradingInstructions();
-	}
-
-	protected double getAvailableFunds() {
-		final EClientSocket l_client = m_wrapper.getClient();
-		l_client.reqAccountSummary(1, "All", "AvailableFunds");
-		try {
-			Thread.sleep(2000);
-		} catch (final InterruptedException e) {
-			m_logger.info("Thread encountered InterruptedException");
-			m_logger.info(e.toString());
-		}
-		l_client.cancelAccountSummary(1);
-
-		return m_wrapper.value();
 	}
 }
