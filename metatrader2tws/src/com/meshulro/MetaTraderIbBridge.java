@@ -70,7 +70,7 @@ public class MetaTraderIbBridge {
 		}
 
 		m_wrapper = new EWrapperImpl(m_logger);
-		m_wrapper.account(m_properties.getProperty("IbAccount"));
+		m_wrapper.account(m_properties.getProperty(l_hostname.concat("IbAccount")));
 		m_wrapper.tag("AvailableFunds");
 
 		m_ibLogFilePath = m_properties.getProperty(l_hostname.concat("IbLogFilePath"));
@@ -86,8 +86,9 @@ public class MetaTraderIbBridge {
 			m_logger.severe(e.toString());
 		}
 
-		final TelegramHandler l_telegramHandler = new TelegramHandler(m_properties.getProperty("TelegramBotToken"),
-				m_properties.getProperty("TelegramChatId"));
+		final TelegramHandler l_telegramHandler = new TelegramHandler(
+				m_properties.getProperty(l_hostname.concat("TelegramBotToken")),
+				m_properties.getProperty(l_hostname.concat("TelegramChatId")));
 		l_telegramHandler.setFormatter(new SimpleFormatter());
 		m_logger.addHandler(l_telegramHandler);
 
@@ -161,6 +162,13 @@ public class MetaTraderIbBridge {
 					m_logger.info(e3.toString());
 				}
 
+				m_wrapper.getClient().reqIds(-1);
+				try {
+					Thread.sleep(5000);
+				} catch (final InterruptedException e) {
+					m_logger.info("Thread encountered InterruptedException");
+					m_logger.info(e.toString());
+				}
 				int l_currentOrderId = m_wrapper.getCurrentOrderId();
 
 				if (l_metaTraderContract.action().equals("Close")) {
