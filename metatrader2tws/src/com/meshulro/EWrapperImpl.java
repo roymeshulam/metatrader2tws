@@ -22,28 +22,30 @@ import com.ib.client.TickType;
 //! [ewrapperimpl]
 public class EWrapperImpl implements EWrapper {
 	// ! [ewrapperimpl]
-	protected String m_tag;
-
-	protected double m_value;
+	protected String m_tags;
 
 	protected String m_account;
 
 	protected Logger m_logger;
 
+	protected double m_unrealizedPnL;
+
+	protected double m_netLiquidationByCurrency;
+
 	protected List<Order> m_orders;
 
 	protected List<Contract> m_contracts;
 
-	public String tag() {
-		return m_tag;
-	}
-
-	public double value() {
-		return m_value;
-	}
-
 	public String account() {
 		return m_account;
+	}
+
+	public double unrealizedPnL() {
+		return m_unrealizedPnL;
+	}
+
+	public double netLiquidationByCurrency() {
+		return m_netLiquidationByCurrency;
 	}
 
 	public List<Contract> contracts() {
@@ -54,12 +56,8 @@ public class EWrapperImpl implements EWrapper {
 		return m_orders;
 	}
 
-	public void tag(final String v) {
-		m_tag = v;
-	}
-
-	public void value(final double v) {
-		m_value = v;
+	public void tags(final String v) {
+		m_tags = v;
 	}
 
 	public void account(final String v) {
@@ -411,10 +409,15 @@ public class EWrapperImpl implements EWrapper {
 	@Override
 	public void accountSummary(final int reqId, final String account, final String tag, final String value,
 			final String currency) {
-		if (account.equals(m_account) && tag.equals(m_tag)) {
+		if (account.equals(m_account) && m_tags.contains(tag)) {
 			m_logger.info("Acct Summary. ReqId: " + reqId + ", Acct: " + account + ", Tag: " + tag + ", Value: " + value
 					+ ", Currency: " + currency);
-			value(Double.valueOf(value));
+
+			if ("NetLiquidationByCurrency".equals(tag)) {
+				m_netLiquidationByCurrency = Double.valueOf(value);
+			} else if ("UnrealizedPnL".equals(tag)) {
+				m_unrealizedPnL = Double.valueOf(value);
+			}
 		}
 	}
 	// ! [accountsummary]

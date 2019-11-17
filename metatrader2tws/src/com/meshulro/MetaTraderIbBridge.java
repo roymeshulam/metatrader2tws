@@ -71,7 +71,6 @@ public class MetaTraderIbBridge {
 
 		m_wrapper = new EWrapperImpl(m_logger);
 		m_wrapper.account(m_properties.getProperty(l_hostname.concat("IbAccount")));
-		m_wrapper.tag("AvailableFunds");
 
 		m_ibLogFilePath = m_properties.getProperty(l_hostname.concat("IbLogFilePath"));
 		try {
@@ -164,7 +163,7 @@ public class MetaTraderIbBridge {
 
 				m_wrapper.getClient().reqIds(-1);
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(10000);
 				} catch (final InterruptedException e) {
 					m_logger.info("Thread encountered InterruptedException");
 					m_logger.info(e.toString());
@@ -208,7 +207,8 @@ public class MetaTraderIbBridge {
 					}
 					m_wrapper.initialize();
 				} else {
-					m_wrapper.getClient().reqAccountSummary(1, "All", "AvailableFunds");
+					m_wrapper.tags("NetLiquidationByCurrency,UnrealizedPnL");
+					m_wrapper.getClient().reqAccountSummary(1, "All", "$LEDGER");
 					try {
 						Thread.sleep(10000);
 					} catch (final InterruptedException e) {
@@ -217,8 +217,17 @@ public class MetaTraderIbBridge {
 					}
 					m_wrapper.getClient().cancelAccountSummary(1);
 
-					final double l_totalQuantity = Math.round(l_metaTraderContract.m_relativeSize * m_wrapper.value());
-					m_logger.info("Positions total quantity = ".concat(Double.toString(l_totalQuantity)));
+					final double l_netLiquidation = m_wrapper.netLiquidationByCurrency();
+					m_logger.info("Net Liquidation = ".concat(Double.toString(l_netLiquidation)));
+
+					final double l_unrealizedPnL = m_wrapper.unrealizedPnL();
+					m_logger.info("Unrealized PnL = ".concat(Double.toString(l_unrealizedPnL)));
+
+					m_logger.info("Gross Liquidation = ".concat(Double.toString(l_netLiquidation - l_unrealizedPnL)));
+
+					final double l_totalQuantity = Math
+							.round(l_metaTraderContract.m_relativeSize * (l_netLiquidation - l_unrealizedPnL));
+					m_logger.info("Total Quantity = ".concat(Double.toString(l_totalQuantity)));
 					if (l_totalQuantity > 0) {
 						final Contract l_marketContract = new Contract();
 						l_marketContract.secType("CFD");
@@ -264,7 +273,7 @@ public class MetaTraderIbBridge {
 							}
 						}
 					} else {
-						m_logger.severe("getAvailableFunds returned 0, please place order manually");
+						m_logger.severe("Total quantity = 0, please place order manually");
 					}
 				}
 				try {
@@ -281,7 +290,7 @@ public class MetaTraderIbBridge {
 				ZonedDateTime.now().getSecond() < 15 ? 15 - ZonedDateTime.now().getSecond()
 						: ZonedDateTime.now().getSecond() > 45 ? 75 - ZonedDateTime.now().getSecond()
 								: 45 - ZonedDateTime.now().getSecond(),
-				30, SECONDS);
+				5, SECONDS);
 	}
 
 	public static void main(final String[] args) {
