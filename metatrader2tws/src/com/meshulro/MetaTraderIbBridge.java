@@ -290,7 +290,7 @@ public class MetaTraderIbBridge {
 				ZonedDateTime.now().getSecond() < 15 ? 15 - ZonedDateTime.now().getSecond()
 						: ZonedDateTime.now().getSecond() > 45 ? 75 - ZonedDateTime.now().getSecond()
 								: 45 - ZonedDateTime.now().getSecond(),
-				5, SECONDS);
+				30, SECONDS);
 	}
 
 	public static void main(final String[] args) {
