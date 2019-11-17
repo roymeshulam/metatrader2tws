@@ -174,7 +174,7 @@ public class MetaTraderIbBridge {
 					m_logger.info("Cancelling all orders");
 					m_wrapper.getClient().reqGlobalCancel();
 					try {
-						Thread.sleep(5000);
+						Thread.sleep(10000);
 					} catch (final InterruptedException e) {
 						m_logger.info("Thread encountered InterruptedException");
 						m_logger.info(e.toString());
@@ -183,7 +183,7 @@ public class MetaTraderIbBridge {
 					m_logger.info("Closing all positions");
 					m_wrapper.getClient().reqPositions();
 					try {
-						Thread.sleep(5000);
+						Thread.sleep(10000);
 					} catch (final InterruptedException e) {
 						m_logger.info("Thread encountered InterruptedException");
 						m_logger.info(e.toString());
@@ -199,7 +199,7 @@ public class MetaTraderIbBridge {
 						m_logger.info("Placing market order");
 						l_client.placeOrder(l_currentOrderId++, m_wrapper.contracts().get(i), l_marketOrder);
 						try {
-							Thread.sleep(5000);
+							Thread.sleep(10000);
 						} catch (final InterruptedException e) {
 							m_logger.info("Thread encountered InterruptedException");
 							m_logger.info(e.toString());
@@ -243,7 +243,7 @@ public class MetaTraderIbBridge {
 						m_logger.info("Placing market order");
 						l_client.placeOrder(l_currentOrderId++, l_marketContract, l_marketOrder);
 						try {
-							Thread.sleep(5000);
+							Thread.sleep(10000);
 						} catch (final InterruptedException e) {
 							m_logger.info("Thread encountered InterruptedException");
 							m_logger.info(e.toString());
@@ -266,12 +266,13 @@ public class MetaTraderIbBridge {
 							m_logger.info("Placing limit order");
 							l_client.placeOrder(l_currentOrderId++, l_limitContract, l_limitOrder);
 							try {
-								Thread.sleep(15000);
+								Thread.sleep(10000);
 							} catch (final InterruptedException e) {
 								m_logger.info("Thread encountered InterruptedException");
 								m_logger.info(e.toString());
 							}
 						}
+						m_wrapper.initialize();
 					} else {
 						m_logger.severe("Total quantity = 0, please place order manually");
 					}
