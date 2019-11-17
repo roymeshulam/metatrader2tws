@@ -94,6 +94,8 @@ public class EWrapperImpl implements EWrapper {
 	}
 
 	public void initialize() {
+		m_logger.info("Initializing wrapper");
+
 		m_netLiquidationByCurrency = 0;
 		m_unrealizedPnL = 0;
 		m_orders.clear();

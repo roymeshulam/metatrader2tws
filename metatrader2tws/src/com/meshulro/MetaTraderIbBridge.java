@@ -161,6 +161,7 @@ public class MetaTraderIbBridge {
 					m_logger.info(e3.toString());
 				}
 
+				m_wrapper.initialize();
 				m_wrapper.getClient().reqIds(-1);
 				try {
 					Thread.sleep(10000);
@@ -205,7 +206,6 @@ public class MetaTraderIbBridge {
 							m_logger.info(e.toString());
 						}
 					}
-					m_wrapper.initialize();
 				} else {
 					m_wrapper.tags("NetLiquidationByCurrency,UnrealizedPnL");
 					m_wrapper.getClient().reqAccountSummary(1, "All", "$LEDGER");
@@ -272,7 +272,6 @@ public class MetaTraderIbBridge {
 								m_logger.info(e.toString());
 							}
 						}
-						m_wrapper.initialize();
 					} else {
 						m_logger.severe("Total quantity = 0, please place order manually");
 					}
