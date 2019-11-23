@@ -97,40 +97,10 @@ public class MetaTraderIbBridge {
 			m_logger.severe("Last modified returned 0, file does not exist or if an I/O error occurs, exiting");
 			System.exit(1);
 		} else {
-			final EClientSocket l_client = m_wrapper.getClient();
-			final EReaderSignal l_signal = m_wrapper.getSignal();
-			l_client.eConnect("127.0.0.1", 4002, 0);
-
-			final EReader l_reader = new EReader(l_client, l_signal);
-			l_reader.start();
-			new Thread() {
-				@Override
-				public void run() {
-					while (l_client.isConnected()) {
-						l_signal.waitForSignal();
-						try {
-							l_reader.processMsgs();
-						} catch (final IOException e) {
-							m_logger.severe("Reader encountered IO Exception");
-							m_logger.severe(e.toString());
-						}
-
-					}
-				}
-			}.start();
-
-			try {
-				Thread.sleep(2000);
-			} catch (final InterruptedException e3) {
-				m_logger.info("Thread encountered InterruptedException");
-				m_logger.info(e3.toString());
-			}
-
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
 				public void run() {
 					m_logger.info("Performing shutdown");
-					m_wrapper.getClient().eDisconnect();
 				}
 			});
 
@@ -166,6 +136,34 @@ public class MetaTraderIbBridge {
 				m_wrapper.initialize();
 
 				final EClientSocket l_client = m_wrapper.getClient();
+				final EReaderSignal l_signal = m_wrapper.getSignal();
+				l_client.eConnect("127.0.0.1", 4002, 0);
+
+				final EReader l_reader = new EReader(l_client, l_signal);
+				l_reader.start();
+				new Thread() {
+					@Override
+					public void run() {
+						while (l_client.isConnected()) {
+							l_signal.waitForSignal();
+							try {
+								l_reader.processMsgs();
+							} catch (final IOException e) {
+								m_logger.severe("Reader encountered IO Exception");
+								m_logger.severe(e.toString());
+							}
+
+						}
+					}
+				}.start();
+
+				try {
+					Thread.sleep(10000);
+				} catch (final InterruptedException e3) {
+					m_logger.info("Thread encountered InterruptedException");
+					m_logger.info(e3.toString());
+				}
+				int l_currentOrderId = m_wrapper.getCurrentOrderId();
 
 				m_logger.info("Cancelling all orders");
 				l_client.reqGlobalCancel();
@@ -175,15 +173,6 @@ public class MetaTraderIbBridge {
 					m_logger.info("Thread encountered InterruptedException");
 					m_logger.info(e.toString());
 				}
-
-				l_client.reqIds(-1);
-				try {
-					Thread.sleep(10000);
-				} catch (final InterruptedException e) {
-					m_logger.info("Thread encountered InterruptedException");
-					m_logger.info(e.toString());
-				}
-				int l_currentOrderId = m_wrapper.getCurrentOrderId();
 
 				if (l_metaTraderContract.action().equals("Close")) {
 					m_logger.info("Closing all positions");
@@ -287,6 +276,8 @@ public class MetaTraderIbBridge {
 					m_logger.info("Thread encountered InterruptedException");
 					m_logger.info(e.toString());
 				}
+
+				m_wrapper.getClient().eDisconnect();
 			}
 		};
 
